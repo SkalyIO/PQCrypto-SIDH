@@ -6,7 +6,7 @@
 
 #include <string.h>
 #include "sha3/fips202.h"
-
+#include "random/random_seed.h"
 
 int crypto_kem_keypair(unsigned char *pk, unsigned char *sk)
 { // SIKE's key generation
@@ -26,6 +26,25 @@ int crypto_kem_keypair(unsigned char *pk, unsigned char *sk)
     return 0;
 }
 
+int crypto_kem_keypair_seed(unsigned char *seed, unsigned char *pk, unsigned char *sk)
+{ // SIKE's key generation
+  // Outputs: secret key sk (CRYPTO_SECRETKEYBYTES = MSG_BYTES + SECRETKEY_B_BYTES + CRYPTO_PUBLICKEYBYTES bytes)
+  //          public key pk (CRYPTO_PUBLICKEYBYTES bytes) 
+
+    // Generate lower portion of secret key sk <- s||SK
+    randombytesFromSeed(seed, sk, MSG_BYTES);
+    // Change 1 byte in the seed for different random results
+    seed[31] = (seed[31] + 1) % 255;
+    random_mod_order_B_seed(seed, sk + MSG_BYTES);
+
+    // Generate public key pk
+    EphemeralKeyGeneration_B(sk + MSG_BYTES, pk);
+
+    // Append public key pk to secret key sk
+    memcpy(&sk[MSG_BYTES + SECRETKEY_B_BYTES], pk, CRYPTO_PUBLICKEYBYTES);
+
+    return 0;
+}
 
 int crypto_kem_enc(unsigned char *ct, unsigned char *ss, const unsigned char *pk)
 { // SIKE's encapsulation

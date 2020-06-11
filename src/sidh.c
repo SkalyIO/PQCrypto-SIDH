@@ -5,7 +5,7 @@
 *********************************************************************************************/ 
 
 #include "random/random.h"
-
+#include "random/random_seed.h"
 
 static void init_basis(digit_t *gen, f2elm_t XP, f2elm_t XQ, f2elm_t XR)
 { // Initialization of basis points
@@ -36,6 +36,13 @@ void random_mod_order_B(unsigned char* random_digits)
     random_digits[SECRETKEY_B_BYTES-1] &= MASK_BOB;     // Masking last byte 
 }
 
+void random_mod_order_B_seed(const unsigned char* seed, unsigned char* random_digits)
+{  // Generation of Bob's secret key  
+   // Outputs random value in [0, 2^Floor(Log(2, oB)) - 1]
+
+    randombytesFromSeed(seed, random_digits, SECRETKEY_B_BYTES);
+    random_digits[SECRETKEY_B_BYTES-1] &= MASK_BOB;     // Masking last byte 
+}
 
 int EphemeralKeyGeneration_A(const unsigned char* PrivateKeyA, unsigned char* PublicKeyA)
 { // Alice's ephemeral public key generation

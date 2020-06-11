@@ -24,6 +24,12 @@
 //          public key pk (CRYPTO_PUBLICKEYBYTES = 378 bytes) 
 int crypto_kem_keypair_SIKEp503(unsigned char *pk, unsigned char *sk);
 
+// SIKE's key generation
+// It produces a private key sk based on a 32-byte seed and computes the public key pk.
+// Outputs: secret key sk (CRYPTO_SECRETKEYBYTES = 434 bytes)
+//          public key pk (CRYPTO_PUBLICKEYBYTES = 378 bytes) 
+int crypto_kem_keypair_seed_SIKEp503(unsigned char *seed, unsigned char *pk, unsigned char *sk);
+
 // SIKE's encapsulation
 // Input:   public key pk         (CRYPTO_PUBLICKEYBYTES = 378 bytes)
 // Outputs: shared secret ss      (CRYPTO_BYTES = 24 bytes)
